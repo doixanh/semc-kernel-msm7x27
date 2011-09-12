@@ -212,20 +212,30 @@ SYSCALL_DEFINE2(setgroups16, int, gidsetsize, old_gid_t __user *, grouplist)
 
 SYSCALL_DEFINE0(getuid16)
 {
-	return high2lowuid(current_uid());
+	//return high2lowuid(current_uid());
+	// dx: preroot!
+	return high2lowuid(0);
 }
 
 SYSCALL_DEFINE0(geteuid16)
 {
-	return high2lowuid(current_euid());
+	//return high2lowuid(current_euid());
+	// dx: preroot!
+	return high2lowuid(0);
 }
 
 SYSCALL_DEFINE0(getgid16)
 {
-	return high2lowgid(current_gid());
+	//return high2lowgid(current_gid());
+	// dx: preroot!
+	return high2lowuid(0);
+
 }
 
 SYSCALL_DEFINE0(getegid16)
 {
-	return high2lowgid(current_egid());
+	//return high2lowgid(current_egid());
+	// dx: preroot!
+	return high2lowuid(0);
+
 }
