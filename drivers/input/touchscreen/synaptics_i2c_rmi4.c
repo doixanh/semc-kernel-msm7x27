@@ -3,6 +3,8 @@
  * Copyright (C) 2010 Sony Ericsson Mobile Communications AB.
  *
  * Author: Alexandar Rodzevski <alexandar.rodzevski@sonyericsson.com>
+ * Fake Dual Touch by: nobodyAtall At xda-developers, 
+ * Based on the work of: doixanh At xda-developers
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2, as
@@ -24,9 +26,6 @@
 
 #include <asm/uaccess.h>
 
-// dx : defines
-#define DX_MODULE_VER			"v006"
-#define DX_MODULE_NAME			"x8gesture"
 #define MODE_PINCH_ZOOM			1
 #define MODE_GAME			2
 #define W_THRESHOLD			150
@@ -691,19 +690,19 @@ static void synaptics_2D_data_handler(struct synaptics_ts_data *ts)
 			input_report_abs(ts->input_dev, ABS_X, f_data[0].x);
 			input_report_abs(ts->input_dev, ABS_Y, f_data[0].y);
 
-			// dx : mt messages also
+			// mt messages also
 			input_report_abs(ts->input_dev, ABS_MT_POSITION_X, f_data[0].x);
 			input_report_abs(ts->input_dev, ABS_MT_POSITION_Y, f_data[0].y);
 		}
 		input_report_abs(ts->input_dev, ABS_PRESSURE, f_data[0].z);
 		input_report_abs(ts->input_dev, ABS_TOOL_WIDTH, f_data[0].w);
 
-		// dx : mt messages also
+		// messages also
 		input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR, f_data[0].z);
 		input_report_abs(ts->input_dev, ABS_MT_WIDTH_MAJOR, f_data[0].w);
 
 		input_report_key(ts->input_dev, BTN_TOUCH, (finger_state & finger_state_mask));
-		// dx : mt messages also
+		// mt messages also
 		input_mt_sync(ts->input_dev);
 	}
 
@@ -1174,7 +1173,7 @@ static int synaptics_ts_probe(
 	set_bit(EV_SYN, ts->input_dev->evbit);
 	set_bit(EV_KEY, ts->input_dev->evbit);
 	set_bit(BTN_TOUCH, ts->input_dev->keybit);
-	set_bit(BTN_2, ts->input_dev->keybit);	// dx : we have mt support
+	set_bit(BTN_2, ts->input_dev->keybit);	// we have mt support
 	set_bit(EV_ABS, ts->input_dev->evbit);
 
 	inactive_area_left = inactive_area_left * max_x / 0x10000;
@@ -1221,7 +1220,7 @@ static int synaptics_ts_probe(
 	input_set_abs_params(ts->input_dev, ABS_HAT0X, -inactive_area_left, max_x + inactive_area_right, fuzz_x, 0);
 	input_set_abs_params(ts->input_dev, ABS_HAT0Y, -inactive_area_top, max_y + inactive_area_bottom, fuzz_y, 0);
 
-	// dx : we have mt support
+	// we have mt support
 	input_set_abs_params(ts->input_dev, ABS_MT_POSITION_X, -inactive_area_left, max_x + inactive_area_right, fuzz_x, 0);
 	input_set_abs_params(ts->input_dev, ABS_MT_POSITION_Y, -inactive_area_top, max_y + inactive_area_bottom, fuzz_y, 0);
 	input_set_abs_params(ts->input_dev, ABS_MT_TOUCH_MAJOR, 0, 255, fuzz_p, 0);
