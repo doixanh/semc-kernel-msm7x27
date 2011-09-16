@@ -117,7 +117,7 @@
 #include  <linux/semc/semc_gpio_extr.h>
 #endif
 #define MSM_PMEM_MDP_SIZE	0xC74000
-#define MSM_PMEM_ADSP_SIZE	0x8EC000
+#define MSM_PMEM_ADSP_SIZE	0x900000
 #ifdef CONFIG_CAPTURE_KERNEL
 #include "smd_private.h"
 #endif
@@ -2362,7 +2362,8 @@ static struct msm_acpu_clock_platform_data msm7x27_clock_data = {
 	.acpu_switch_time_us = 50,
 	.max_speed_delta_khz = 256000,
 	.vdd_switch_time_us = 62,
-	.max_axi_khz = 128000,
+//	.max_axi_khz = 128000,
+	.max_axi_khz = 160000,
 };
 
 void msm_serial_debug_init(unsigned int base, int irq,
