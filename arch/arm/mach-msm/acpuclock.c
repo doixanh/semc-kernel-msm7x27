@@ -202,15 +202,33 @@ static struct clkctl_acpu_speed pll0_196_pll1_960_pll2_1200[] = {
 
 /* 7x27 normal with GSM capable modem - PLL0 and PLL1 swapped */
 static struct clkctl_acpu_speed pll0_960_pll1_245_pll2_1200[] = {
+/*	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 19200, 0, 0, 30720 },*/
+/*	{ 0, 120000, ACPU_PLL_0, 4, 7,  60000, 1, 3,  61440 },*/
+/*	{ 1, 122880, ACPU_PLL_1, 1, 1,  61440, 1, 3,  61440 },*/
+/*	{ 0, 200000, ACPU_PLL_2, 2, 5,  66667, 2, 4,  61440 },*/
+/*	{ 1, 245760, ACPU_PLL_1, 1, 0, 122880, 1, 4,  61440 },*/
+/*	{ 1, 320000, ACPU_PLL_0, 4, 2, 160000, 1, 5, 160000 },*/
+/*	{ 0, 400000, ACPU_PLL_2, 2, 2, 133333, 2, 5, 160000 },*/
+/*	{ 1, 480000, ACPU_PLL_0, 4, 1, 160000, 2, 6, 160000 },*/
 	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 19200, 0, 0, 30720 },
 	{ 0, 120000, ACPU_PLL_0, 4, 7,  60000, 1, 3,  61440 },
-	{ 1, 122880, ACPU_PLL_1, 1, 1,  61440, 1, 3,  61440 },
+	{ 1, 122880, ACPU_PLL_1, 1, 1,  61440, 1, 0,  61440 },
 	{ 0, 200000, ACPU_PLL_2, 2, 5,  66667, 2, 4,  61440 },
-	{ 1, 245760, ACPU_PLL_1, 1, 0, 122880, 1, 4,  61440 },
-	{ 1, 320000, ACPU_PLL_0, 4, 2, 160000, 1, 5, 160000 },
+	{ 1, 245760, ACPU_PLL_1, 1, 0, 122880, 1, 2,  61440 },
+	{ 1, 320000, ACPU_PLL_0, 4, 2, 160000, 1, 3, 160000 },
 	{ 0, 400000, ACPU_PLL_2, 2, 2, 133333, 2, 5, 160000 },
-	{ 1, 480000, ACPU_PLL_0, 4, 1, 160000, 2, 6, 160000 },
-	{ 1, 600000, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },
+	{ 1, 480000, ACPU_PLL_0, 4, 1, 160000, 2, 5, 160000 },
+	{ 1, 614400, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },
+	{ 1, 633600, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
+	{ 1, 652800, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
+	{ 1, 672000, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
+	{ 1, 691200, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
+	{ 1, 710400, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
+	{ 1, 729600, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
+	{ 1, 748800, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
+	{ 1, 768000, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
+	{ 1, 787200, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
+	{ 1, 806400, ACPU_PLL_2, 2, 1, 200000, 2, 7, 160000 },	
 //	{ 1, 640000, ACPU_PLL_0, 4, 1, 160000, 3, 7, 160000 },
 //	{ 1, 768000, ACPU_PLL_0, 4, 1, 192000, 3, 7, 192000 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0}, {0, 0, 0} }
@@ -390,12 +408,20 @@ static int acpuclk_set_vdd_level(int vdd)
 
 /* Set proper dividers for the given clock speed. */
 static void acpuclk_set_div(const struct clkctl_acpu_speed *hunt_s) {
-	uint32_t reg_clkctl, reg_clksel, clk_div, src_sel;
+	uint32_t reg_clkctl, reg_clksel, clk_div, src_sel, a11_div;
 
 	reg_clksel = readl(A11S_CLK_SEL_ADDR);
 
 	/* AHB_CLK_DIV */
 	clk_div = (reg_clksel >> 1) & 0x03;
+	a11_div=hunt_s->a11clk_src_div;
+	if(hunt_s->a11clk_khz > 600000) {
+		a11_div=0;
+		writel(hunt_s->a11clk_khz / 19200, MSM_CLK_CTL_BASE+0x33C);		// specified ratio
+		udelay(50);
+	}
+
+	
 	/* CLK_SEL_SRC1NO */
 	src_sel = reg_clksel & 1;
 
@@ -413,7 +439,7 @@ static void acpuclk_set_div(const struct clkctl_acpu_speed *hunt_s) {
 	reg_clkctl = readl(A11S_CLK_CNTL_ADDR);
 	reg_clkctl &= ~(0xFF << (8 * src_sel));
 	reg_clkctl |= hunt_s->a11clk_src_sel << (4 + 8 * src_sel);
-	reg_clkctl |= hunt_s->a11clk_src_div << (0 + 8 * src_sel);
+	reg_clkctl |= a11_div << (0 + 8 * src_sel);
 	writel(reg_clkctl, A11S_CLK_CNTL_ADDR);
 
 	/* Program clock source selection */
