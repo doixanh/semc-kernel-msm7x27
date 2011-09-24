@@ -1,7 +1,7 @@
 /*
  * Automatically generated C config: don't edit
  * Linux kernel version: 2.6.29
- * Tue Sep 20 22:50:39 2011
+ * Sat Sep 24 20:58:51 2011
  */
 #define AUTOCONF_INCLUDED
 #define CONFIG_VIDEO_V4L1_COMPAT 1
@@ -353,7 +353,7 @@
 #define CONFIG_VIRT_TO_BUS 1
 #define CONFIG_MSM_SMD_TTY 1
 #define CONFIG_MD 1
-#define CONFIG_LOCALVERSION "$(KERNEL_LOCAL_VERSION)dx"
+#define CONFIG_LOCALVERSION "$(KERNEL_LOCAL_VERSION)-dx-v002"
 #define CONFIG_USB_MSM_OTG_72K 1
 #define CONFIG_DIAG_CHAR 1
 #define CONFIG_ZLIB_INFLATE 1
@@ -388,7 +388,6 @@
 #define CONFIG_EARLYSUSPEND 1
 #define CONFIG_CPU_ABRT_EV6 1
 #define CONFIG_VECTORS_BASE 0xffff0000
-#define CONFIG_SCHED_BFS 1
 #define CONFIG_SND_MSM_DAI_SOC 1
 #define CONFIG_HZ 100
 #define CONFIG_CPU_32v6K 1
